@@ -1,6 +1,23 @@
 body{
-    background-color: cyan;
     display: flex;
     justify-content: center;
     align-items: center;
+    background: linear-gradient(300deg, #00a2ff, #19bef0, #9aa3f2);
+    background-size: 180% 180%;
+    animation: gradient-animation 18s ease infinite;
+}
+caption{
+    font-size: 3rem;
+}
+
+@keyframes gradient-animation {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
 }
