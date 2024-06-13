@@ -2,7 +2,7 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(300deg, #00a2ff, #19bef0, #9aa3f2);
+    background: linear-gradient(300deg, #0dddec, #4c84f3, #0018f0);
     background-size: 180% 180%;
     animation: gradient-animation 18s ease infinite;
 }
