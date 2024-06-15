@@ -2,13 +2,23 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(300deg, #0dddec, #083ba1, #701ba5);
+    background: linear-gradient(300deg, #f900ff, #4500ff, #00bbff);
     background-size: 180% 180%;
     animation: gradient-animation 18s ease infinite;
-}
+} /*#0dddec, #083ba1, #701ba5*/
 caption{
     font-size: 3rem;
-    color: white;
+    color: whitesmoke;
+}
+
+table{
+  background-color: transparent;
+}
+TH{
+  background-color: transparent;
+}
+FONT{
+  color:yellow;
 }
 
 @keyframes gradient-animation {
