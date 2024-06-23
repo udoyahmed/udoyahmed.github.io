@@ -36,5 +36,5 @@ $(".btn").on("click", async () => {
     }
     await Promise.all(timeoutPromises);
     $(".final").html(`<h2>Congrats! You refered ${refs.length} people. But is it higher than Jarif's?</h2>
-        <a href="./result.html"target="_blank"><button type="button" class="btn btn-outline-success btn-lg">Check</button></a>`);
+        <a href="./result.html"><button type="button" class="btn btn-outline-success btn-lg">Check</button></a>`);
 });
