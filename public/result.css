@@ -1,0 +1,42 @@
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(300deg, #de8039, #ee4949, #f90000);
+    background-size: 180% 180%;
+    animation: gradient-animation 18s ease infinite;
+} 
+
+.main-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.main-container>div>h1{
+    font-family: "Abril Fatface", serif;
+    font-weight: 400;
+    font-style: normal;
+    color: antiquewhite;
+    font-size: 3rem;
+}
+.para{
+    color:antiquewhite;
+    font-size: 1.5rem;
+    margin-top: 50px;
+}
+
+
+@keyframes gradient-animation {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+}

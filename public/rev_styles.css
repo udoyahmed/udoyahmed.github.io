@@ -1,0 +1,25 @@
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(300deg, #fffeff, #ec6c6c, #f90000);
+    background-size: 180% 180%;
+    animation: gradient-animation 18s ease infinite;
+} 
+
+.lead{
+    font-weight: 700;
+}
+
+
+@keyframes gradient-animation {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+}

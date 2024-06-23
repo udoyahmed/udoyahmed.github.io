@@ -1,0 +1,57 @@
+body{
+    background-color: antiquewhite;
+} 
+
+
+.main-container>div>h1{
+    font-family: "Playwrite NG Modern", cursive;
+    font-optical-sizing: auto;
+    font-weight: 900;
+    font-style: normal;
+    margin-bottom: 40px;
+}
+
+.main-container{
+    display: flex;
+    align-items: center;
+    margin-top: 100px;
+    flex-direction: column;
+}
+
+.btn{
+    margin-bottom: 50px;
+}
+
+.array ol {
+    list-style-type: none; 
+    padding-left: 0;     
+    margin-bottom: 50px;
+}
+.array ol li {
+    margin: 5px 0; 
+    color:#191F69;
+}
+.final{
+    display: flex;
+    flex-direction: column;
+    color:#D81361;
+    align-items: center;
+}
+.final>h2{
+    margin: 50px 50px 50px 50px;
+    text-align: justify;
+}
+
+
+
+@keyframes gradient-animation {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+}
