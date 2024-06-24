@@ -30,6 +30,9 @@ body{
 .na{
   font-size: 1rem;
 }
+button{
+  margin-top:40px;
+}
 
 
 @keyframes gradient-animation {
