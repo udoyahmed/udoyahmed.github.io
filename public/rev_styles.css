@@ -11,6 +11,11 @@ body{
     font-weight: 700;
 }
 
+.header{
+  font-family: "Sedan SC", serif;
+  font-weight: 900;
+  font-style: normal;
+}
 
 @keyframes gradient-animation {
     0% {
