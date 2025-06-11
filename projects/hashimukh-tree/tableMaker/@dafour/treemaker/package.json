@@ -1,0 +1,23 @@
+{
+  "name": "@dafour/treemaker",
+  "version": "1.0.1",
+  "description": "This javascript library allows you to make tree in HTML from JSON.",
+  "main": "gulpfile.js",
+  "directories": {
+    "example": "examples",
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/roumilb/treeMaker.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/roumilb/treeMaker/issues"
+  },
+  "homepage": "https://github.com/roumilb/treeMaker#readme"
+}
