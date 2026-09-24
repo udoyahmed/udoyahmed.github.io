@@ -185,45 +185,35 @@
     </div>
 </div>
 
+<!-- Embedded Audio Element with Provided Bell Sound -->
+<audio id="bellAudio" preload="auto">
+    <source src="input_file_0.png" type="audio/wav">
+    <source src="input_file_0.png" type="audio/mp3">
+</audio>
+
 <script>
-    let totalSeconds = 600;
     let remainingSeconds = 600;
     let timerInterval = null;
     let isRunning = false;
     let warningTriggered = false;
     let finalTriggered = false;
 
-    // Web Audio API Sound Generator for Bell Chime
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const bellAudio = document.getElementById('bellAudio');
 
     function playBellSound() {
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
+        if (bellAudio) {
+            bellAudio.currentTime = 0;
+            bellAudio.play().catch(err => {
+                console.warn("Audio play prevented by browser policy. Click 'Start' or 'Manual Bell' first.", err);
+            });
         }
-        
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-
-        osc.type = 'sine';
-        // Desk bell pitch around 1200Hz
-        osc.frequency.setValueAtTime(1200, audioCtx.currentTime); 
-        osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 1.2);
-
-        gain.gain.setValueAtTime(0.8, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
-
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-
-        osc.start();
-        osc.stop(audioCtx.currentTime + 1.2);
     }
 
     function ringBell(count = 1) {
         for (let i = 0; i < count; i++) {
             setTimeout(() => {
                 playBellSound();
-            }, i * 350);
+            }, i * 600);
         }
     }
 
@@ -256,7 +246,13 @@
 
     function startTimer() {
         if (isRunning) return;
-        audioCtx.resume();
+        
+        // Unlock audio context on user interaction
+        bellAudio.play().then(() => {
+            bellAudio.pause();
+            bellAudio.currentTime = 0;
+        }).catch(() => {});
+
         isRunning = true;
         
         timerInterval = setInterval(() => {
