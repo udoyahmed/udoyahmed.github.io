@@ -3,8 +3,303 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>SOfE Presentation Timer & Bell</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --text-color: #f0f6fc;
+            --accent-color: #238636;
+            --status-color: #2ea043;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            transition: background-color 0.5s ease;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            border: 1px solid #30363d;
+            border-radius: 16px;
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: #8b949e;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            margin-bottom: 24px;
+            color: #58a6ff;
+        }
+
+        .timer-display {
+            font-size: 6rem;
+            font-weight: 700;
+            font-family: monospace;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            letter-spacing: 2px;
+            transition: color 0.3s ease;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+            background-color: var(--status-color);
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: white;
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        .btn-start { background-color: #238636; }
+        .btn-start:hover { background-color: #2ea043; }
+
+        .btn-pause { background-color: #d29922; }
+        .btn-pause:hover { background-color: #e3b341; }
+
+        .btn-reset { background-color: #da3633; }
+        .btn-reset:hover { background-color: #f85149; }
+
+        .btn-bell {
+            grid-column: span 3;
+            background-color: #1f6beb;
+            font-size: 1.1rem;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-bell:hover { background-color: #388bfd; }
+
+        .settings {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #30363d;
+            display: flex;
+            justify-content: space-around;
+            font-size: 0.85rem;
+            color: #8b949e;
+        }
+
+        .setting-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        input[type="number"] {
+            width: 60px;
+            padding: 4px 8px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            color: white;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        /* Color States */
+        body.state-normal { --status-color: #2ea043; }
+        body.state-warning { --status-color: #d29922; background-color: #1c190d; }
+        body.state-overtime { --status-color: #da3633; background-color: #270d0d; }
+    </style>
 </head>
-<body>
+<body class="state-normal">
+
+<div class="container">
+    <h1>IMechE SOfE</h1>
+    <h2>Presentation Timer</h2>
+
+    <div class="status-badge" id="statusBadge">Ready</div>
+    
+    <div class="timer-display" id="timerDisplay">10:00</div>
+
+    <div class="controls">
+        <button class="btn-start" id="startBtn" onclick="startTimer()">Start</button>
+        <button class="btn-pause" id="pauseBtn" onclick="pauseTimer()">Pause</button>
+        <button class="btn-reset" onclick="resetTimer()">Reset</button>
+        <button class="btn-bell" onclick="ringBell(1)">🔔 Manual Bell Ring</button>
+    </div>
+
+    <div class="settings">
+        <div class="setting-group">
+            <label>Total Time (min)</label>
+            <input type="number" id="totalMin" value="10" min="1" onchange="resetTimer()">
+        </div>
+        <div class="setting-group">
+            <label>Warning Bell (min)</label>
+            <input type="number" id="warnMin" value="8" min="1">
+        </div>
+    </div>
+</div>
+
+<script>
+    let totalSeconds = 600;
+    let remainingSeconds = 600;
+    let timerInterval = null;
+    let isRunning = false;
+    let warningTriggered = false;
+    let finalTriggered = false;
+
+    // Web Audio API Sound Generator for Bell Chime
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playBellSound() {
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+        
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sine';
+        // Desk bell pitch around 1200Hz
+        osc.frequency.setValueAtTime(1200, audioCtx.currentTime); 
+        osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 1.2);
+
+        gain.gain.setValueAtTime(0.8, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + 1.2);
+    }
+
+    function ringBell(count = 1) {
+        for (let i = 0; i < count; i++) {
+            setTimeout(() => {
+                playBellSound();
+            }, i * 350);
+        }
+    }
+
+    function updateDisplay() {
+        const minutes = Math.floor(Math.abs(remainingSeconds) / 60);
+        const seconds = Math.abs(remainingSeconds) % 60;
+        const prefix = remainingSeconds < 0 ? "-" : "";
+        
+        document.getElementById('timerDisplay').innerText = 
+            `${prefix}${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+        const total = parseInt(document.getElementById('totalMin').value) * 60;
+        const warn = parseInt(document.getElementById('warnMin').value) * 60;
+        const elapsed = total - remainingSeconds;
+
+        const body = document.body;
+        const badge = document.getElementById('statusBadge');
+
+        if (remainingSeconds < 0) {
+            body.className = "state-overtime";
+            badge.innerText = "Time Over!";
+        } else if (elapsed >= warn) {
+            body.className = "state-warning";
+            badge.innerText = "Warning (2 Min Left)";
+        } else {
+            body.className = "state-normal";
+            badge.innerText = isRunning ? "In Progress" : "Ready";
+        }
+    }
+
+    function startTimer() {
+        if (isRunning) return;
+        audioCtx.resume();
+        isRunning = true;
+        
+        timerInterval = setInterval(() => {
+            remainingSeconds--;
+            
+            const total = parseInt(document.getElementById('totalMin').value) * 60;
+            const warn = parseInt(document.getElementById('warnMin').value) * 60;
+            const elapsed = total - remainingSeconds;
+
+            // Auto-trigger warning bell (1 ring)
+            if (elapsed === warn && !warningTriggered) {
+                ringBell(1);
+                warningTriggered = true;
+            }
+
+            // Auto-trigger final time bell (2 rings)
+            if (remainingSeconds === 0 && !finalTriggered) {
+                ringBell(2);
+                finalTriggered = true;
+            }
+
+            updateDisplay();
+        }, 1000);
+    }
+
+    function pauseTimer() {
+        clearInterval(timerInterval);
+        isRunning = false;
+        document.getElementById('statusBadge').innerText = "Paused";
+    }
+
+    function resetTimer() {
+        pauseTimer();
+        const totalMin = parseInt(document.getElementById('totalMin').value) || 10;
+        remainingSeconds = totalMin * 60;
+        warningTriggered = false;
+        finalTriggered = false;
+        updateDisplay();
+    }
+
+    // Initialize
+    resetTimer();
+</script>
+
 </body>
 </html>
